@@ -2,9 +2,19 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def cargar_datos():
-    pd.read_excel('data/UBI')
-    print(1)
+
+def graficar_modelo_iva_ubi():
+    datos = pd.read_csv('data/UBI.csv')
+    datos['masa_total_d'] = datos['D'] * datos['D_per_capita']
+    datos['masa_total_pbi'] = datos['masa_total_d'] / datos['PBI'] * 100
+    datos['diferencia_iva_ubi'] = datos['PBI_IVA'] - datos['masa_total_pbi']
+
+    plt.plot(datos['AÑO'], datos['diferencia_iva_ubi'])
+    plt.title('Comparativa IVA-UBI')
+    plt.xlabel('Año')
+    plt.ylabel('Diferencia IVA - UBI')
+    plt.show()
+
 
 class ModeloUBI:
 
@@ -52,7 +62,7 @@ class ModeloUBI:
             dt = 0.066 * self.a0 + self.omega * self.b0_2 + self.kappa * self.n0 + dt_prev
             return at, bt, ct, dt
 
-    def graficar_primer_modelo(self, t_deseado):
+    def graficar_modelo_progresivo(self, t_deseado):
         t_list = np.arange(t_deseado + 1)
         a_list = [self.n_primer_modelo_t(t)[0] for t in t_list]
         b_list = [self.n_primer_modelo_t(t)[1] for t in t_list]
@@ -66,12 +76,13 @@ class ModeloUBI:
         plt.plot(t_list, c_list, label='C')
         plt.plot(t_list, d_list, label='D')
         plt.legend(loc='best', numpoints=1)
+        plt.title('Modelo UBI Progresivo')
         plt.xlabel('Período de tiempo')
         plt.ylabel('Población')
 
         plt.show()
 
-    def graficar_segundo_modelo(self, t_deseado):
+    def graficar_modelo_shock(self, t_deseado):
         t_list = np.arange(t_deseado + 1)
         a_list = [self.n_segundo_modelo_t(t)[0] for t in t_list]
         b_list = [self.n_segundo_modelo_t(t)[1] for t in t_list]
@@ -85,7 +96,10 @@ class ModeloUBI:
         plt.plot(t_list, c_list, label='C')
         plt.plot(t_list, d_list, label='D')
         plt.legend(loc='best', numpoints=1)
+        plt.title('Modelo UBI de Shock')
         plt.xlabel('Período de tiempo')
         plt.ylabel('Población')
 
         plt.show()
+
+

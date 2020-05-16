@@ -8,7 +8,7 @@ Original file is located at
 """
 
 # @title Variables poblacionales iniciales { run: "auto", display-mode: "both" }
-from utils import ModeloUBI
+from utils import ModeloUBI, graficar_modelo_iva_ubi
 
 a0 = 11033056  # @param {type:"number"}
 b0 = 28571872  # @param {type:"number"}
@@ -37,8 +37,9 @@ modelo = ModeloUBI(a0, b0, b0_1, b0_2, c0, d0, phi, theta, kappa, omega)
 
 t_deseado = 18  # @param {type:"integer"}
 
-modelo.graficar_primer_modelo(t_deseado)
-modelo.graficar_segundo_modelo(t_deseado)
+graficar_modelo_iva_ubi()
+modelo.graficar_modelo_progresivo(t_deseado)
+modelo.graficar_modelo_shock(t_deseado)
 
 
 
