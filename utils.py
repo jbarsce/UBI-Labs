@@ -1,5 +1,10 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
+def cargar_datos():
+    pd.read_excel('data/UBI')
+    print(1)
 
 class ModeloUBI:
 
@@ -46,3 +51,41 @@ class ModeloUBI:
             ct = ct_prev - self.theta * ct_prev
             dt = 0.066 * self.a0 + self.omega * self.b0_2 + self.kappa * self.n0 + dt_prev
             return at, bt, ct, dt
+
+    def graficar_primer_modelo(self, t_deseado):
+        t_list = np.arange(t_deseado + 1)
+        a_list = [self.n_primer_modelo_t(t)[0] for t in t_list]
+        b_list = [self.n_primer_modelo_t(t)[1] for t in t_list]
+        c_list = [self.n_primer_modelo_t(t)[2] for t in t_list]
+        d_list = [self.n_primer_modelo_t(t)[3] for t in t_list]
+        res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
+
+        plt.plot(t_list, res_list, label='N')
+        plt.plot(t_list, a_list, label='A')
+        plt.plot(t_list, b_list, label='B')
+        plt.plot(t_list, c_list, label='C')
+        plt.plot(t_list, d_list, label='D')
+        plt.legend(loc='best', numpoints=1)
+        plt.xlabel('Período de tiempo')
+        plt.ylabel('Población')
+
+        plt.show()
+
+    def graficar_segundo_modelo(self, t_deseado):
+        t_list = np.arange(t_deseado + 1)
+        a_list = [self.n_segundo_modelo_t(t)[0] for t in t_list]
+        b_list = [self.n_segundo_modelo_t(t)[1] for t in t_list]
+        c_list = [self.n_segundo_modelo_t(t)[2] for t in t_list]
+        d_list = [self.n_segundo_modelo_t(t)[3] for t in t_list]
+        res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
+
+        plt.plot(t_list, res_list, label='N')
+        plt.plot(t_list, a_list, label='A')
+        plt.plot(t_list, b_list, label='B1')
+        plt.plot(t_list, c_list, label='C')
+        plt.plot(t_list, d_list, label='D')
+        plt.legend(loc='best', numpoints=1)
+        plt.xlabel('Período de tiempo')
+        plt.ylabel('Población')
+
+        plt.show()

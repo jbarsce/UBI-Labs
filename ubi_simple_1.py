@@ -9,8 +9,6 @@ Original file is located at
 
 # @title Variables poblacionales iniciales { run: "auto", display-mode: "both" }
 from utils import ModeloUBI
-import numpy as np
-import matplotlib.pyplot as plt
 
 a0 = 11033056  # @param {type:"number"}
 b0 = 28571872  # @param {type:"number"}
@@ -39,42 +37,8 @@ modelo = ModeloUBI(a0, b0, b0_1, b0_2, c0, d0, phi, theta, kappa, omega)
 
 t_deseado = 18  # @param {type:"integer"}
 
-t_list = np.arange(t_deseado + 1)
-a_list = [modelo.n_primer_modelo_t(t)[0] for t in t_list]
-b_list = [modelo.n_primer_modelo_t(t)[1] for t in t_list]
-c_list = [modelo.n_primer_modelo_t(t)[2] for t in t_list]
-d_list = [modelo.n_primer_modelo_t(t)[3] for t in t_list]
-res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
+modelo.graficar_primer_modelo(t_deseado)
+modelo.graficar_segundo_modelo(t_deseado)
 
-plt.plot(t_list, res_list, label='N')
-plt.plot(t_list, a_list, label='A')
-plt.plot(t_list, b_list, label='B')
-plt.plot(t_list, c_list, label='C')
-plt.plot(t_list, d_list, label='D')
-plt.legend(loc='best', numpoints=1)
-plt.xlabel('Período de tiempo')
-plt.ylabel('Población')
 
-plt.show()
 
-# @title Correr simulación poblacional (modelo 2 (shock)) { run: "auto", vertical-output: true, display-mode: "both" }
-
-t_deseado = 18  # @param {type:"integer"}
-
-t_list = np.arange(t_deseado + 1)
-a_list = [modelo.n_segundo_modelo_t(t)[0] for t in t_list]
-b_list = [modelo.n_segundo_modelo_t(t)[1] for t in t_list]
-c_list = [modelo.n_segundo_modelo_t(t)[2] for t in t_list]
-d_list = [modelo.n_segundo_modelo_t(t)[3] for t in t_list]
-res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
-
-plt.plot(t_list, res_list, label='N')
-plt.plot(t_list, a_list, label='A')
-plt.plot(t_list, b_list, label='B1')
-plt.plot(t_list, c_list, label='C')
-plt.plot(t_list, d_list, label='D')
-plt.legend(loc='best', numpoints=1)
-plt.xlabel('Período de tiempo')
-plt.ylabel('Población')
-
-plt.show()
