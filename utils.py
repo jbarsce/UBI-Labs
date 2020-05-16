@@ -9,6 +9,7 @@ def graficar_modelo_iva_ubi():
     datos['masa_total_pbi'] = datos['masa_total_d'] / datos['PBI'] * 100
     datos['diferencia_iva_ubi'] = datos['PBI_IVA'] - datos['masa_total_pbi']
 
+    plt.plot([2004, 2018], [0, 0], '--', c='grey')
     plt.plot(datos['AÑO'], datos['diferencia_iva_ubi'])
     plt.title('Comparativa IVA-UBI')
     plt.xlabel('Año')
