@@ -15,8 +15,6 @@ b0 = 28571872  # @param {type:"number"}
 c0 = 4990720  # @param {type:"number"}
 d0 = 0  # @param {type:"number"}
 
-n0 = a0 + b0 + c0 + d0
-
 b0_1 = b0 * 0.5
 b0_2 = b0 * 0.5
 
