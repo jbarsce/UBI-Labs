@@ -16,6 +16,20 @@ def graficar_modelo_iva_ubi():
     plt.show()
 
 
+def graficar_demo_real_ubi():
+    datos = pd.read_csv('data/UBI_demo.csv')
+
+    plt.plot(datos['AÑO'], datos['N'], label='N')
+    plt.plot(datos['AÑO'], datos['B'], label='B')
+    plt.plot(datos['AÑO'], datos['C2004'], label='C')
+    plt.plot(datos['AÑO'], datos['D'], label='D')
+    plt.legend(loc='best', numpoints=1)
+    plt.title('Modelo UBI a partir de datos reales')
+    plt.xlabel('Período de tiempo')
+    plt.ylabel('Población')
+    plt.show()
+
+
 class ModeloUBI:
 
     def __init__(self, a0, b0, b0_1, b0_2, c0, d0, phi, theta, kappa, omega):
