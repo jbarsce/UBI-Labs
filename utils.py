@@ -3,21 +3,39 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def graficar_modelo_iva_ubi():
+def graficar_modelo_iva_ubi(comparado_con_iva: bool = True, en_usd: bool = False) -> None:
     datos = pd.read_csv('data/UBI.csv')
-    datos['masa_total_d'] = datos['D'] * datos['D_per_capita']
-    datos['masa_total_pbi'] = datos['masa_total_d'] / datos['PBI'] * 100
-    datos['diferencia_iva_ubi'] = datos['PBI_IVA'] - datos['masa_total_pbi']
+
+    if comparado_con_iva:
+        impuesto = 'PBI_IVA'
+        title = 'Comparativa IVA-UBI'
+        y_label = 'Diferencia IVA - UBI (en %)'
+    else:
+        impuesto = 'PBI_INDIRECTOS'
+        title = 'Comparativa INDIRECTOS-UBI'
+        y_label = 'Diferencia INDIRECTOS - UBI (en %)'
+
+    if en_usd:
+        d_per_capita = 'D_per_capita_USD'
+        pbi = 'PBI_USD'
+        title += ' en (USD)'
+    else:
+        d_per_capita = 'D_per_capita'
+        pbi = 'PBI'
+
+    datos['masa_total_d'] = datos['D'] * datos[d_per_capita]
+    datos['masa_total_pbi'] = datos['masa_total_d'] / datos[pbi] * 100
+    datos['diferencia_impuesto_ubi'] = datos[impuesto] - datos['masa_total_pbi']
 
     plt.plot([2004, 2018], [0, 0], '--', c='grey')
-    plt.plot(datos['AÑO'], datos['diferencia_iva_ubi'])
-    plt.title('Comparativa IVA-UBI')
+    plt.plot(datos['AÑO'], datos['diferencia_impuesto_ubi'])
+    plt.title(title)
     plt.xlabel('Año')
-    plt.ylabel('Diferencia IVA - UBI')
+    plt.ylabel(y_label)
     plt.show()
 
 
-def graficar_demo_real_ubi():
+def graficar_demo_real_ubi() -> None:
     datos = pd.read_csv('data/UBI_demo.csv')
 
     plt.plot(datos['AÑO'], datos['N'], label='N')
@@ -47,7 +65,7 @@ class ModeloUBI:
 
         self.n0 = np.sum([a0, b0, c0, d0])
 
-    def n_primer_modelo_t(self, t):
+    def n_primer_modelo_t(self, t: int):
         if t == 0:
             return self.a0, self.b0, self.c0, self.d0
         else:
@@ -59,7 +77,7 @@ class ModeloUBI:
             dt = self.phi * self.a0 + self.phi * self.b0 + self.kappa * self.n0 + dt_prev
             return at, bt, ct, dt
 
-    def n_segundo_modelo_t(self, t):
+    def n_segundo_modelo_t(self, t: int):
         if t == 0:
             return self.a0, self.b0, self.c0, self.d0
         elif t == 1:
@@ -77,7 +95,7 @@ class ModeloUBI:
             dt = 0.066 * self.a0 + self.omega * self.b0_2 + self.kappa * self.n0 + dt_prev
             return at, bt, ct, dt
 
-    def graficar_modelo_progresivo(self, t_deseado):
+    def graficar_modelo_progresivo(self, t_deseado: int) -> None:
         t_list = np.arange(t_deseado + 1)
         a_list = [self.n_primer_modelo_t(t)[0] for t in t_list]
         b_list = [self.n_primer_modelo_t(t)[1] for t in t_list]
@@ -97,7 +115,7 @@ class ModeloUBI:
 
         plt.show()
 
-    def graficar_modelo_shock(self, t_deseado):
+    def graficar_modelo_shock(self, t_deseado: int) -> None:
         t_list = np.arange(t_deseado + 1)
         a_list = [self.n_segundo_modelo_t(t)[0] for t in t_list]
         b_list = [self.n_segundo_modelo_t(t)[1] for t in t_list]

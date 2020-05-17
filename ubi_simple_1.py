@@ -35,10 +35,13 @@ modelo = ModeloUBI(a0, b0, b0_1, b0_2, c0, d0, phi, theta, kappa, omega)
 
 t_deseado = 18  # @param {type:"integer"}
 
+graficar_modelo_iva_ubi()
+graficar_modelo_iva_ubi(comparado_con_iva=False)
+
 modelo.graficar_modelo_progresivo(t_deseado)
 modelo.graficar_modelo_shock(t_deseado)
-graficar_modelo_iva_ubi()
 graficar_demo_real_ubi()
+
 
 
 
