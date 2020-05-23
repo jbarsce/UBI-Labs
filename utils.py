@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def graficar_modelo_iva_ubi(comparado_con_iva: bool = True, en_usd: bool = False) -> None:
@@ -95,23 +96,38 @@ class ModeloUBI:
             dt = 0.066 * self.a0 + self.omega * self.b0_2 + self.kappa * self.n0 + dt_prev
             return at, bt, ct, dt
 
-    def graficar_modelo_progresivo(self, t_deseado: int) -> None:
-        t_list = np.arange(t_deseado + 1)
-        a_list = [self.n_primer_modelo_t(t)[0] for t in t_list]
-        b_list = [self.n_primer_modelo_t(t)[1] for t in t_list]
-        c_list = [self.n_primer_modelo_t(t)[2] for t in t_list]
-        d_list = [self.n_primer_modelo_t(t)[3] for t in t_list]
+    def graficar_modelo(self, t_deseado: int, tipo_modelo:str = 'progresivo') -> None:
+
+        if tipo_modelo == 'progresivo':
+            modelo = self.n_primer_modelo_t
+            titulo = 'Modelo UBI Progresivo'
+            b_label = 'B'
+        elif tipo_modelo == 'shock':
+            modelo = self.n_segundo_modelo_t
+            titulo = 'Modelo UBI de Shock'
+            b_label = 'B1'
+        else:
+            raise NotImplementedError
+
+        t_list = np.array([modelo(t) for t in np.arange(t_deseado + 1)])/1e6
+        t_list_filas = np.arange(t_deseado + 1)
+
+        a_list = t_list[:, 0]
+        b_list = t_list[:, 1]
+        c_list = t_list[:, 2]
+        d_list = t_list[:, 3]
         res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
 
-        plt.plot(t_list, res_list, label='N')
-        plt.plot(t_list, a_list, label='A')
-        plt.plot(t_list, b_list, label='B')
-        plt.plot(t_list, c_list, label='C')
-        plt.plot(t_list, d_list, label='D')
+        sns.set()
+        plt.plot(t_list_filas, res_list, label='N (población total)')
+        plt.plot(t_list_filas, a_list, label='A (menores de 18 sin IBU)')
+        plt.plot(t_list_filas, b_list, label='{} (entre 18 y 64 años sin IBU)'.format(b_label))
+        plt.plot(t_list_filas, c_list, label='C (jubilados)')
+        plt.plot(t_list_filas, d_list, label='D (población con IBU)')
         plt.legend(loc='best', numpoints=1)
-        plt.title('Modelo UBI Progresivo')
+        plt.title(titulo)
         plt.xlabel('Período de tiempo')
-        plt.ylabel('Población')
+        plt.ylabel('Población (millones de habitantes)')
 
         plt.show()
 
