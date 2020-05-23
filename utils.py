@@ -6,20 +6,21 @@ import seaborn as sns
 
 def graficar_modelo_iva_ubi(comparado_con_iva: bool = True, en_usd: bool = False) -> None:
     datos = pd.read_csv('data/UBI.csv')
+    datos_demo = pd.read_csv('data/UBI_demo.csv')
 
     if comparado_con_iva:
         impuesto = 'PBI_IVA'
-        title = 'Comparativa IVA-UBI'
+        titulo = 'Comparativa IVA-UBI'
         y_label = 'Diferencia IVA - UBI (en %)'
     else:
         impuesto = 'PBI_INDIRECTOS'
-        title = 'Comparativa INDIRECTOS-UBI'
+        titulo = 'Comparativa INDIRECTOS-UBI'
         y_label = 'Diferencia INDIRECTOS - UBI (en %)'
 
     if en_usd:
         d_per_capita = 'D_per_capita_USD'
         pbi = 'PBI_USD'
-        title += ' en (USD)'
+        titulo += ' en (USD)'
     else:
         d_per_capita = 'D_per_capita'
         pbi = 'PBI'
@@ -28,25 +29,36 @@ def graficar_modelo_iva_ubi(comparado_con_iva: bool = True, en_usd: bool = False
     datos['masa_total_pbi'] = datos['masa_total_d'] / datos[pbi] * 100
     datos['diferencia_impuesto_ubi'] = datos[impuesto] - datos['masa_total_pbi']
 
+    sns.set()
+    ax = plt.gca()
+    ax2 = ax.twinx()
+    plt.grid()
     plt.plot([2004, 2018], [0, 0], '--', c='grey')
-    plt.plot(datos['AÑO'], datos['diferencia_impuesto_ubi'])
-    plt.title(title)
+    ax2.plot(datos['AÑO'], datos['diferencia_impuesto_ubi'], color='black')
+    ax.bar(datos['AÑO'],100 * datos['D']/(datos_demo['N'] - datos_demo['C2004']),
+           label='Cobertura de UBI', width=0.65, color='lightblue')
+    plt.title(titulo)
+    ax.legend(loc='lower center', numpoints=1)
     plt.xlabel('Año')
-    plt.ylabel(y_label)
+    ax2.set_ylabel(y_label)
+    ax.set_ylabel('grado de cobertura (%)')
     plt.show()
 
 
 def graficar_demo_real_ubi() -> None:
     datos = pd.read_csv('data/UBI_demo.csv')
 
-    plt.plot(datos['AÑO'], datos['N'], label='N')
-    plt.plot(datos['AÑO'], datos['B'], label='B')
-    plt.plot(datos['AÑO'], datos['C2004'], label='C')
-    plt.plot(datos['AÑO'], datos['D'], label='D')
+    sns.set()
+
+    plt.plot(datos['AÑO'], datos['N']/1e6, label='N (población total)')
+    plt.plot(datos['AÑO'], datos['B']/1e6, label='B (entre 0-64 años sin IBU)')
+    plt.plot(datos['AÑO'], datos['C2004']/1e6, label='C (jubilados)')
+    plt.plot(datos['AÑO'], datos['D']/1e6, label='D (población con IBU)')
+
     plt.legend(loc='best', numpoints=1)
     plt.title('Modelo UBI a partir de datos reales')
     plt.xlabel('Período de tiempo')
-    plt.ylabel('Población')
+    plt.ylabel('Población (millones de habitantes)')
     plt.show()
 
 
@@ -128,26 +140,6 @@ class ModeloUBI:
         plt.title(titulo)
         plt.xlabel('Período de tiempo')
         plt.ylabel('Población (millones de habitantes)')
-
-        plt.show()
-
-    def graficar_modelo_shock(self, t_deseado: int) -> None:
-        t_list = np.arange(t_deseado + 1)
-        a_list = [self.n_segundo_modelo_t(t)[0] for t in t_list]
-        b_list = [self.n_segundo_modelo_t(t)[1] for t in t_list]
-        c_list = [self.n_segundo_modelo_t(t)[2] for t in t_list]
-        d_list = [self.n_segundo_modelo_t(t)[3] for t in t_list]
-        res_list = np.sum((a_list, b_list, c_list, d_list), axis=0)
-
-        plt.plot(t_list, res_list, label='N')
-        plt.plot(t_list, a_list, label='A')
-        plt.plot(t_list, b_list, label='B1')
-        plt.plot(t_list, c_list, label='C')
-        plt.plot(t_list, d_list, label='D')
-        plt.legend(loc='best', numpoints=1)
-        plt.title('Modelo UBI de Shock')
-        plt.xlabel('Período de tiempo')
-        plt.ylabel('Población')
 
         plt.show()
 
